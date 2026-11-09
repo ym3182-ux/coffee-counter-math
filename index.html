@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="An interactive state model of a capsule coffee machine." />
+    <title>Capsule Coffee Machine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .machine-stage { padding-top: 188px; }
+      .guide-explainer { width: 100%; max-width: 360px; margin: 22px 0 0; }
+      .machine-body { position: relative; overflow: hidden; }
+      .machine-top,.machine-face { position: relative; z-index: 2; }
+      .machine-pattern { position: absolute; z-index: 1; inset: 43px 0 0; pointer-events: none; opacity: 0; }
+      .coffee-machine[data-skin="halloween"] .machine-body { background: linear-gradient(135deg,#ee8837,#4d294e); }.coffee-machine[data-skin="halloween"] .machine-top { background: #35203f; }.coffee-machine[data-skin="halloween"] .water-tank { background: linear-gradient(90deg,#f0aa46,#6c385f); }.coffee-machine[data-skin="halloween"] .capsule-bay { background: #51294f; }.coffee-machine[data-skin="halloween"] .lever { background: #e37d38; }
+      .coffee-machine[data-skin="christmas"] .machine-body { background: linear-gradient(135deg,#e9dfc6,#3c7e62); }.coffee-machine[data-skin="christmas"] .machine-top { background: #a9343c; }.coffee-machine[data-skin="christmas"] .water-tank { background: linear-gradient(90deg,#f0e5c9,#4b9276); }.coffee-machine[data-skin="christmas"] .capsule-bay { background: #a83d42; }.coffee-machine[data-skin="christmas"] .lever { background: #31715a; }
+      .coffee-machine[data-skin="chinese"] .machine-body { background: linear-gradient(135deg,#d93d3c,#8e2027); }.coffee-machine[data-skin="chinese"] .machine-top { background: #701922; color: #ffe7a4; }.coffee-machine[data-skin="chinese"] .water-tank { background: linear-gradient(90deg,#e87553,#aa272d); }.coffee-machine[data-skin="chinese"] .capsule-bay { background: #7f1d25; }.coffee-machine[data-skin="chinese"] .lever { background: #dcb649; }
+      .coffee-machine[data-skin="halloween"] .machine-pattern { opacity: .45; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='168' height='92' viewBox='0 0 168 92'%3E%3Cg opacity='.96'%3E%3Cg transform='translate(10 13)'%3E%3Cellipse cx='30' cy='27' rx='25' ry='22' fill='%23f6a139'/%3E%3Cellipse cx='30' cy='27' rx='13' ry='22' fill='none' stroke='%23d66b2b' stroke-width='3'/%3E%3Cpath d='M28 5c1-8 8-7 11-5-5 2-6 6-6 9' fill='%23567b43'/%3E%3Cpath d='m16 23 7-7 6 8m14-1-7-7-5 8M17 35c9 9 20 9 28 0-5 2-8 0-11-3-3 4-7 5-17 3Z' fill='%23382339'/%3E%3C/g%3E%3Cg transform='translate(94 12)'%3E%3Cpath d='M31 3C15 3 5 15 7 31c1 9 6 13 12 16v13h24V47c6-3 11-7 12-16C57 15 47 3 31 3Z' fill='%23f4ead1'/%3E%3Ccircle cx='21' cy='29' r='7' fill='%23382339'/%3E%3Ccircle cx='42' cy='29' r='7' fill='%23382339'/%3E%3Cpath d='m31 35-5 8h10Z' fill='%23382339'/%3E%3Cpath d='M21 50v10m10-10v10m10-10v10' stroke='%23382339' stroke-width='3'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); background-size: 168px 92px; }
+      .coffee-machine[data-skin="christmas"] .machine-pattern { opacity: .47; background-color: #f3e7c8; background-image: repeating-linear-gradient(0deg,transparent 0 23px,rgba(139,30,42,.88) 23px 29px,transparent 29px 37px,rgba(39,106,76,.78) 37px 40px),repeating-linear-gradient(90deg,transparent 0 25px,rgba(139,30,42,.88) 25px 31px,transparent 31px 41px,rgba(39,106,76,.78) 41px 44px); }
+      .coffee-machine[data-skin="chinese"] .machine-pattern { opacity: .38; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='190' height='104' viewBox='0 0 190 104'%3E%3Cg fill='none' stroke='%23f5d36f' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 66c19-34 43-38 55-15 12 25 37 25 50 1 9-17 25-22 45-8-5-10-2-18 8-23m-8 23 14-2-6 12 10 9-16 2c-13 22-35 30-55 13-18-15-33-7-45 6-18 18-38 9-52-18Z'/%3E%3Cpath d='m160 35-11-12m18 11 5-15m-26 44-11 12m-70-6-13 13m62-9 10 14M35 53l-15-7'/%3E%3Ccircle cx='168' cy='42' r='2.5' fill='%23f5d36f' stroke='none'/%3E%3Cpath d='M25 20c11-11 22-8 27 0 8-11 22-7 24 4M101 23c10-10 21-7 25 1 8-10 20-6 23 3' stroke-width='3'/%3E%3C/g%3E%3C/svg%3E"); background-size: 190px 104px; }
+      .coffee-machine[data-button-skin="heart"] .power-button,.coffee-machine[data-button-skin="star"] .power-button { border: 0; border-radius: 0; background: #102727; box-shadow: none; filter: drop-shadow(4px 5px 0 rgba(14,33,31,.32)); }
+      .coffee-machine[data-button-skin="heart"] .power-button::before,.coffee-machine[data-button-skin="heart"] .power-button::after,.coffee-machine[data-button-skin="star"] .power-button::before,.coffee-machine[data-button-skin="star"] .power-button::after { content: ""; position: absolute; z-index: 1; pointer-events: none; }
+      .coffee-machine[data-button-skin="heart"] .power-button { width: 82px; height: 76px; clip-path: polygon(50% 97%,5% 58%,0 30%,16% 5%,41% 8%,50% 24%,59% 8%,84% 5%,100% 30%,95% 58%); }
+      .coffee-machine[data-button-skin="heart"] .power-button::before { inset: 4px; background: #a94750; clip-path: inherit; }.coffee-machine[data-button-skin="heart"] .power-button::after { inset: 10px; z-index: 2; background: linear-gradient(145deg,#f28b91,#c5505b 62%,#9d3c49); clip-path: inherit; }
+      .coffee-machine[data-button-skin="star"] .power-button { width: 88px; height: 88px; color: #26443f; clip-path: polygon(50% 0,61% 34%,98% 38%,68% 59%,79% 95%,50% 74%,21% 95%,32% 59%,2% 38%,39% 34%); }
+      .coffee-machine[data-button-skin="star"] .power-button::before { inset: 4px; background: #b28427; clip-path: inherit; }.coffee-machine[data-button-skin="star"] .power-button::after { inset: 10px; z-index: 2; background: linear-gradient(145deg,#ffe68a,#e6bc45 58%,#bd8825); clip-path: inherit; }
+      .coffee-machine[data-button-skin="heart"] .power-button span,.coffee-machine[data-button-skin="star"] .power-button span { position: relative; z-index: 3; }
+      @media (max-width: 620px) { .machine-stage { padding-top: 143px; } }
+    </style>
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="site-header">
+        <p class="eyebrow">5013 · STATES AND STEPS</p>
+        <h1>The counter is open.<br /><em>Who is next?</em></h1>
+        <p class="intro">Make each guest’s order using 40, 80, and 110 ml pours. The total must be exact.</p>
+      </header>
+
+      <section class="simulation" aria-labelledby="simulation-title">
+        <div class="machine-stage">
+          <div class="queue-scene" aria-hidden="true"><i class="person p1"></i><i class="person p2"></i><i class="person p3"></i><i class="person p4"></i><i class="person p5"></i></div>
+          <aside class="game-tools" aria-label="Rewards and shop">
+            <div class="star-wallet" aria-live="polite"><span>STARS</span><strong><b id="starsCount">3</b> ★</strong></div>
+            <div class="streak-chip" id="streakChip" aria-live="polite">
+              <span>STREAK</span><strong id="streakCount">0 / 3</strong>
+            </div>
+            <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true" aria-label="Turn sound off">
+              <span aria-hidden="true" id="soundIcon">🔊</span><strong>SOUND</strong>
+            </button>
+            <details class="shop-panel">
+              <summary>SHOP <span aria-hidden="true">✦</span></summary>
+              <p>Earn 1–2 ★ per order.</p>
+              <button class="skin-test-button" id="skinTestButton" type="button" aria-pressed="false">✦ TRY ALL SKINS</button>
+
+              <section class="shop-group" aria-label="Machine skins">
+                <h3>Machine</h3>
+                <div class="skin-options">
+                  <button class="skin-option" data-category="machine" data-skin="classic" data-cost="0" type="button"><i></i><span>Classic</span><b>FREE</b></button>
+                  <button class="skin-option" data-category="machine" data-skin="midnight" data-cost="4" type="button"><i></i><span>Midnight</span><b>4 ★</b></button>
+                  <button class="skin-option" data-category="machine" data-skin="cherry" data-cost="5" type="button"><i></i><span>Cherry</span><b>5 ★</b></button>
+                  <button class="skin-option" data-category="machine" data-skin="halloween" data-cost="7" type="button"><i></i><span>Halloween</span><b>7 ★</b></button>
+                  <button class="skin-option" data-category="machine" data-skin="christmas" data-cost="8" type="button"><i></i><span>Christmas</span><b>8 ★</b></button>
+                  <button class="skin-option" data-category="machine" data-skin="chinese" data-cost="10" type="button"><i></i><span>Chinese</span><b>10 ★</b></button>
+                </div>
+              </section>
+
+              <section class="shop-group" aria-label="Power button skins">
+                <h3>Power button</h3>
+                <div class="skin-options compact-options">
+                  <button class="skin-option" data-category="button" data-skin="classic" data-cost="0" type="button"><i></i><span>Classic</span><b>FREE</b></button>
+                  <button class="skin-option" data-category="button" data-skin="square" data-cost="3" type="button"><i></i><span>Square</span><b>3 ★</b></button>
+                  <button class="skin-option" data-category="button" data-skin="heart" data-cost="5" type="button"><i></i><span>Heart</span><b>5 ★</b></button>
+                  <button class="skin-option" data-category="button" data-skin="star" data-cost="7" type="button"><i></i><span>Star</span><b>7 ★</b></button>
+                </div>
+              </section>
+
+              <section class="shop-group" aria-label="Cup skins">
+                <h3>Cup</h3>
+                <div class="skin-options compact-options">
+                  <button class="skin-option" data-category="cup" data-skin="classic" data-cost="0" type="button"><i></i><span>Classic</span><b>FREE</b></button>
+                  <button class="skin-option" data-category="cup" data-skin="amber" data-cost="4" type="button"><i></i><span>Amber</span><b>4 ★</b></button>
+                  <button class="skin-option" data-category="cup" data-skin="jade" data-cost="6" type="button"><i></i><span>Jade</span><b>6 ★</b></button>
+                </div>
+              </section>
+            </details>
+          </aside>
+          <section class="customer-card" id="customerCard" aria-live="polite">
+            <div class="customer-meta">
+              <span id="shiftLabel">SHIFT 1 · 1 / 5</span>
+              <span class="difficulty-badge" id="difficultyBadge">EASY · +1 ★</span>
+            </div>
+            <div class="customer-identity">
+              <span class="customer-avatar" id="customerAvatar" aria-hidden="true">👩🏽</span>
+              <div><small>NOW SERVING</small><strong id="customerName">MIA</strong></div>
+            </div>
+            <strong class="customer-order" id="customerRequest">“120 ml, please!”</strong>
+            <small id="customerHint"></small>
+            <button class="reset-order" id="resetOrderButton" type="button" aria-label="Start this order over" title="Start this order over">↺ REDO</button>
+          </section>
+          <div class="coffee-machine" id="machine" data-state="off">
+            <aside class="water-tank" aria-label="Water tank">
+              <div class="tank-cap" aria-hidden="true"></div>
+              <div class="tank-window"><span id="waterMeter"></span></div>
+              <div class="tank-copy"><b>WATER</b></div>
+              <button class="tank-button" id="refillButton" type="button">REFILL</button>
+            </aside>
+
+            <div class="machine-body">
+              <div class="machine-top"><span>CAPSULE / 01</span><span class="power-light" aria-hidden="true"></span></div>
+              <div class="machine-pattern" aria-hidden="true"></div>
+              <div class="machine-face">
+                <button class="power-button" id="powerButton" type="button" aria-pressed="false" aria-label="Power"><span class="power-symbol">⏻</span></button>
+
+                <div class="display" aria-live="polite">
+                  <span class="display-label">SYSTEM STATE</span>
+                  <strong id="displayState">OFF</strong>
+                  <span id="displayMessage">Press power to begin.</span>
+                  <span class="pour-equation" id="pourEquation" hidden></span>
+                </div>
+
+                <section class="capsule-chamber" aria-label="Capsule chamber">
+                  <button class="lever" id="lidButton" type="button" aria-pressed="false" aria-label="Lift lever"><span id="lidLabel" aria-hidden="true">⇧</span><i aria-hidden="true"></i></button>
+                  <div class="capsule-bay">
+                    <button class="capsule" id="podButton" type="button" aria-label="Insert or remove coffee capsule"><span id="podVisualText">+</span></button>
+                    <p id="podHint">Lift lever to load.</p>
+                  </div>
+                </section>
+
+                <div class="cup-controls" aria-label="Choose cup size">
+                  <p>ADD A POUR</p>
+                  <button id="espressoButton" type="button"><b>ESPRESSO</b><span>40 ml</span></button>
+                  <button id="regularButton" type="button"><b>REGULAR</b><span>80 ml</span></button>
+                  <button id="lungoButton" type="button"><b>LUNGO</b><span>110 ml</span></button>
+                </div>
+
+                <div class="spout" aria-hidden="true"><span></span></div>
+                <div class="coffee-stream" id="coffeeStream" aria-hidden="true"></div>
+                <button class="cup" id="replaceCupButton" type="button" aria-label="Coffee cup, maximum capacity 500 milliliters. Click a completed cup to serve the customer."><span class="coffee-fill" id="coffeeFill"></span><span class="coffee-surface"></span><span id="cupLabel">0 ml</span><i></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="logic-panel" aria-labelledby="simulation-title">
+          <p class="eyebrow">MACHINE STATUS</p>
+          <h2 id="simulation-title">One step<br />at a time.</h2>
+          <div class="readout"><span>STATE</span><strong id="stateReadout">OFF</strong></div>
+          <div class="next-action" aria-live="polite"><span>NOW</span><strong id="nextAction">PRESS POWER</strong></div>
+          <details class="logic-details">
+            <summary>Why can’t I continue?</summary>
+            <p id="logicMessage" aria-live="polite">if power is off, brewing is blocked.</p>
+          </details>
+        </aside>
+      </section>
+
+      <p class="reward-toast" id="rewardToast" aria-live="polite" role="status"></p>
+
+      <dialog class="capacity-dialog" id="capacityDialog" aria-labelledby="capacityTitle">
+        <p class="eyebrow">CUP LIMIT</p>
+        <h2 id="capacityTitle">Not enough room.</h2>
+        <p id="capacityMessage">This drink would go over the 500 ml cup capacity.</p>
+        <button id="closeDialogButton" type="button">Keep this cup</button>
+      </dialog>
+
+      <dialog class="shift-dialog" id="shiftDialog" aria-labelledby="shiftTitle">
+        <p class="eyebrow">SHIFT <span id="completedShift">1</span> COMPLETE</p>
+        <h2 id="shiftTitle">Counter closed.</h2>
+        <div class="shift-summary">
+          <p><span>SERVED</span><strong>5 / 5</strong></p>
+          <p><span>SHIFT STARS</span><strong id="shiftStars">+0 ★</strong></p>
+        </div>
+        <p class="next-shift-label">NEXT SHIFT</p>
+        <div class="next-shift-guide" aria-label="Guide for the next shift">
+          <span><b>2 → 3 → 4</b> pours</span>
+          <span><b>3 streak</b> +1 ★</span>
+        </div>
+        <p>Stars stay. Streak restarts.</p>
+        <button id="nextShiftButton" type="button">START SHIFT 2</button>
+      </dialog>
+
+      <section class="logic-map" aria-labelledby="logic-title">
+        <div>
+          <p class="eyebrow">HOW TO PLAY</p>
+          <h2 id="logic-title">A button needs context.</h2>
+          <p>Follow the glow on the machine. These are the four actions it will guide you through.</p>
+          <ol class="guide-strip guide-explainer" aria-label="Coffee-making steps">
+            <li><span aria-hidden="true">⏻</span><b>POWER</b></li>
+            <li><span aria-hidden="true">💧</span><b>WATER</b></li>
+            <li><span aria-hidden="true">⇧</span><b>POD</b></li>
+            <li><span aria-hidden="true">☕</span><b>SERVE</b></li>
+          </ol>
+        </div>
+        <ol class="state-list" aria-label="Coffee machine state transitions">
+          <li data-node="off"><b>01</b><span><strong>Off</strong><small>Press power → Ready</small></span></li>
+          <li data-node="ready"><b>02</b><span><strong>Ready</strong><small>Choose a cup → Brewing</small></span></li>
+          <li data-node="no-water"><b>03</b><span><strong>No water</strong><small>Refill → Ready</small></span></li>
+          <li data-node="brewing"><b>04</b><span><strong>Brewing</strong><small>Lift lever → Paused</small></span></li>
+          <li data-node="paused"><b>05</b><span><strong>Paused</strong><small>Lower lever → Brewing</small></span></li>
+          <li data-node="done"><b>06</b><span><strong>Done</strong><small>Click cup → Ready</small></span></li>
+        </ol>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
